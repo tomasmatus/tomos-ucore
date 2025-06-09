@@ -7,6 +7,7 @@ INSTALLED_PACKAGES=(
     btop
     gh
     neovim
+    ripgrep
     zsh
 )
 
