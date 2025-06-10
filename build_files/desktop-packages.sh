@@ -8,6 +8,7 @@ INSTALLED_PACKAGES=(
     gh
     neovim
     ripgrep
+    fd-find
     zsh
 )
 
