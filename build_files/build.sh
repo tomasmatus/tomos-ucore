@@ -4,11 +4,11 @@ set -ouex pipefail
 
 # Install packages based on image variant
 case "${BASE_IMAGE}" in
-    "*/bazzite*")
+    *"/bazzite"*)
         /ctx/desktop-packages.sh
     ;;
 
-    "*/ucore*")
+    *"/cayo"*)
         /ctx/server-packages.sh
     ;;
 esac
