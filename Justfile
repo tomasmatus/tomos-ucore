@@ -1,7 +1,6 @@
 export repo_organization := env("GITHUB_REPOSITORY_OWNER", "tomasmatus")
-export image_name := env("IMAGE_NAME", "tomos-ucore")
+export image_name := env("IMAGE_NAME", "tom-desktop")
 export centos_version := env("CENTOS_VERSION", "stream10")
-export fedora_version := env("CENTOS_VERSION", "42")
 export default_tag := env("DEFAULT_TAG", "latest")
 export bib_image := env("BIB_IMAGE", "quay.io/centos-bootc/bootc-image-builder:latest")
 
@@ -109,15 +108,26 @@ build $target_image=image_name $tag=default_tag $dx="0" $hwe="0" $gdx="0":
     ver="${tag}-${centos_version}.$(date +%Y%m%d)"
 
     BUILD_ARGS=()
-    BUILD_ARGS+=("--build-arg" "MAJOR_VERSION=${centos_version}")
-    BUILD_ARGS+=("--build-arg" "IMAGE_NAME=${target_image}")
     BUILD_ARGS+=("--build-arg" "IMAGE_VENDOR=${repo_organization}")
+
     BUILD_ARGS+=("--build-arg" "ENABLE_DX=${dx}")
     BUILD_ARGS+=("--build-arg" "ENABLE_HWE=${hwe}")
     BUILD_ARGS+=("--build-arg" "ENABLE_GDX=${gdx}")
+
     if [[ -z "$(git status -s)" ]]; then
         BUILD_ARGS+=("--build-arg" "SHA_HEAD_SHORT=$(git rev-parse --short HEAD)")
     fi
+
+    case "${target_image}" in
+        "tom-server")
+            BUILD_ARGS+=("--build-arg" "BASE_IMAGE=ghcr.io/ublue-os/cayo")
+            BUILD_ARGS+=("--build-arg" "IMAGE_TAG=fedora42")
+        ;;
+        "tom-desktop")
+            BUILD_ARGS+=("--build-arg" "BASE_IMAGE=ghcr.io/ublue-os/bazzite")
+            BUILD_ARGS+=("--build-arg" "IMAGE_TAG=stable")
+        ;;
+    esac
 
     podman build \
         "${BUILD_ARGS[@]}" \
